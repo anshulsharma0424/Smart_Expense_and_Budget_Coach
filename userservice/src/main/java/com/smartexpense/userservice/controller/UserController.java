@@ -23,7 +23,7 @@ public class UserController {
     // ============================= End Points =============================
 
     // 1. Register user
-    @PostMapping("/register")
+    @PostMapping
     public ResponseEntity<UserResponse> registerUser (@Valid @RequestBody RegisterUserRequest registerUserRequest){
         return ResponseEntity.ok(userService.registerUser(registerUserRequest));
     }
