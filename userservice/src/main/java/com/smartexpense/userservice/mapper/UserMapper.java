@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserMapper {
-    public static User toUserEntity (RegisterUserRequest userRequest) {
+    public User toUserEntity (RegisterUserRequest userRequest) {
         User user = new User();
         user.setEmail(userRequest.getEmail());
         user.setPassword(userRequest.getPassword());
@@ -18,11 +18,10 @@ public class UserMapper {
         return user;
     }
 
-    public static UserResponse toUserResponse (User user) {
+    public UserResponse toUserResponse (User user) {
         UserResponse userResponse = new UserResponse();
         userResponse.setId(user.getId());
         userResponse.setEmail(user.getEmail());
-        userResponse.setPassword(user.getPassword());
         userResponse.setFirstname(user.getFirstname());
         userResponse.setLastname(user.getLastname());
         userResponse.setCurrency(user.getCurrency());

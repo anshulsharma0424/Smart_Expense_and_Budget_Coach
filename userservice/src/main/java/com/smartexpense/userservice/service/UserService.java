@@ -16,10 +16,12 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     // Constructor injection of UserRepository
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.userMapper = new UserMapper();
     }
 
     // Register a new user
@@ -29,21 +31,21 @@ public class UserService {
             throw new UserAlreadyExistException("User with email: " + registerRequest.getEmail() + " already exists!");
         }
 
-        User user = UserMapper.toUserEntity(registerRequest); // convert request to entity
+        User user = userMapper.toUserEntity(registerRequest); // convert request to entity
         User savedUser = userRepository.save(user); // save user entity in database
-        return UserMapper.toUserResponse(savedUser); // convert user entity to response and return it
+        return userMapper.toUserResponse(savedUser); // convert user entity to response and return it
     }
 
     // Get all users
     public List<UserResponse> getAllUsers() {
         List<User> users = userRepository.findAll();
-        return users.stream().map(UserMapper::toUserResponse)
+        return users.stream().map(userMapper::toUserResponse)
                 .collect(Collectors.toList());
     }
 
     // Get user by userId
     public UserResponse getUserById(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User with UserID: " + userId + " doesn't exist."));
-        return UserMapper.toUserResponse(user);
+        return userMapper.toUserResponse(user);
     }
 }
