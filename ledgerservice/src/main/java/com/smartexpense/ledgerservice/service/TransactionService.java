@@ -2,9 +2,11 @@ package com.smartexpense.ledgerservice.service;
 
 import com.smartexpense.ledgerservice.dto.TransactionRequest;
 import com.smartexpense.ledgerservice.dto.TransactionResponse;
+import com.smartexpense.ledgerservice.entity.Category;
 import com.smartexpense.ledgerservice.entity.Transaction;
 import com.smartexpense.ledgerservice.exception.TransactionNotFoundException;
 import com.smartexpense.ledgerservice.mapper.TransactionMapper;
+import com.smartexpense.ledgerservice.repository.CategoryRepository;
 import com.smartexpense.ledgerservice.repository.TransactionRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,14 +18,19 @@ import java.util.stream.Collectors;
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
+    private final CategoryRepository categoryRepository;
 
-    public TransactionService(TransactionRepository transactionRepository) {
+    public TransactionService(TransactionRepository transactionRepository,  CategoryRepository categoryRepository) {
         this.transactionRepository = transactionRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     // Create
     public TransactionResponse createTransaction(TransactionRequest transactionRequest) {
-        Transaction transaction = TransactionMapper.toTransactionEntity(transactionRequest);
+        Category category = categoryRepository.findById(transactionRequest.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found with id " + transactionRequest.getCategoryId()));
+
+        Transaction transaction = TransactionMapper.toTransactionEntity(transactionRequest, category);
         Transaction saved = transactionRepository.save(transaction);
         return TransactionMapper.toTransactionResponse(saved);
     }
@@ -64,8 +71,11 @@ public class TransactionService {
         Transaction transaction = transactionRepository.findById(id)
                 .orElseThrow(() -> new TransactionNotFoundException("Transaction not found with id " + id));
 
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found with id " + request.getCategoryId()));
+
         transaction.setUserId(request.getUserId());
-        transaction.setCategoryId(request.getCategoryId());
+        transaction.setCategory(category);
         transaction.setAmount(request.getAmount());
         transaction.setTransactionType(request.getTransactionType());
         transaction.setTransactionDate(request.getTransactionDate());

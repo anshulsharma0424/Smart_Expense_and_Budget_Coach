@@ -9,6 +9,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "categories")
 @Getter @Setter
@@ -26,5 +29,10 @@ public class Category {
     // true for Income category, false for Expense category
     @NotNull
     private Boolean incomeCategory;
+
+    // Reverse mapping (optional, useful if you want to list all transactions under a category)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transaction> transactions = new ArrayList<>();
 }
+
 

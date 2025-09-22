@@ -25,9 +25,10 @@ public class Transaction {
     @NotNull(message = "UserID is required")
     private Long userId;
 
-    // Foreign Key to category table
-    @NotNull(message = "CategoryID is required")
-    private Long categoryId;
+    // Relationship with category table
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
     @NotNull(message = "Amount cannot be null")
     private BigDecimal amount;
