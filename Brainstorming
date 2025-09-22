@@ -1,0 +1,40 @@
+1. User Service
+Role: User registration, authentication data management (initially without Keycloak, baadme integrate kar sakte hain), profile data.
+
+Data: userId (Long), email, password (hashed), firstname, lastname, currency, timestamps.
+
+2. Ledger Service
+Role: Transactions (income/expense) CRUD; categories management; user transactions ka data store karega.
+
+Data: transactionId, userId, amount, categoryId, date, merchant, notes.
+
+Event Publisher: transaction.created Kafka topic pe.
+
+3. Insights Service
+Role: Kafka consumer jo transaction events consume karega aur precomputed reports + summaries generate karega (monthly spend, category breakdown).
+
+Data store: MongoDB preferred for analytics queries.
+
+4. Budget Service
+Role: User budgets set karna; thresholds monitor karna; budget threshold ke cross hone par event publish karna.
+
+Data: budgetId, userId, categoryId, period, limit, thresholds.
+
+5. AI Coach Service
+Role: Kafka consumer jo periodic/demanded feed se AI prompt banakar spending tips aur personalized advice generate karega using Spring AI (Gemini/OpenAI).
+
+Data: AI tips ke structured outputs userId ke liye store karega.
+
+6. Notifier Service
+Role: Alerts aur digests push karna based on budget threshold events aur AI tips.
+
+Channels: SPA realtime notification, email, SMS gateway integration future me.
+
+7. Infrastructure Services
+API Gateway (Spring Cloud Gateway): routing, OAuth2 token validation, rate limiting.
+
+Eureka Server: Service discovery and registry.
+
+Config Server: Centralized config management.
+
+Keycloak: OAuth2/OIDC authentication server supporting SPA PKCE flow for production-grade security.
