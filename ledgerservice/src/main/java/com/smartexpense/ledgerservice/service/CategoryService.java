@@ -8,8 +8,8 @@ import com.smartexpense.ledgerservice.mapper.CategoryMapper;
 import com.smartexpense.ledgerservice.repository.CategoryRepository;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,7 +28,7 @@ public class CategoryService {
                     " and incomeCategory: " + categoryRequest.getIncomeCategory() + " already exists.");
         }
 
-        Category category = new Category();
+        Category category = CategoryMapper.toCategoryEntity(categoryRequest);
         Category savedCategory = categoryRepository.save(category);
         return CategoryMapper.toCategoryResponse(savedCategory);
     }

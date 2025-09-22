@@ -1,6 +1,7 @@
 package com.smartexpense.ledgerservice.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "Category name cannot be null")
+    @NotBlank(message = "Category name cannot be null")
     @Size(max = 100)
     private String name;
 
