@@ -4,9 +4,9 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "userservice", url = "http://localhost:8081/api/users")
+@FeignClient(name = "userservice")
 public interface UserClient {
 
-    @GetMapping("/{userId}/validate")
-    Boolean validateUser(@PathVariable Long userId);
+    @GetMapping("/api/users/{userId}/validate")
+    Boolean validateUser(@PathVariable("userId") Long userId);
 }

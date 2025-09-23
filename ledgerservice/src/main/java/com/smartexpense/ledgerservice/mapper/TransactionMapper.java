@@ -10,7 +10,7 @@ public class TransactionMapper {
     public static Transaction toTransactionEntity(TransactionRequest request, Category category) {
         Transaction transaction = new Transaction();
         transaction.setUserId(request.getUserId());
-        transaction.setCategory(category); // set relation instead of categoryId
+        transaction.setCategory(category);
         transaction.setAmount(request.getAmount());
         transaction.setTransactionType(request.getTransactionType());
         transaction.setTransactionDate(request.getTransactionDate());

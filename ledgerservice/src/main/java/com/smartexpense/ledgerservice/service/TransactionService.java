@@ -75,8 +75,13 @@ public class TransactionService {
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found with id " + request.getCategoryId()));
 
-        TransactionMapper.updateTransactionEntity(transaction, request, category);
+        Boolean userExists = userClient.validateUser(request.getUserId());
 
+        if (userExists == null || !userExists) {
+            throw new RuntimeException("User with id " + request.getUserId() + " does not exist");
+        }
+
+        TransactionMapper.updateTransactionEntity(transaction, request, category);
         Transaction updated = transactionRepository.save(transaction);
         return TransactionMapper.toTransactionResponse(updated);
     }
