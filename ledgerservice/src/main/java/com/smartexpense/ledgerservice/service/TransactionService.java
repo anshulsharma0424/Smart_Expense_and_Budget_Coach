@@ -1,5 +1,6 @@
 package com.smartexpense.ledgerservice.service;
 
+import com.smartexpense.ledgerservice.client.UserClient;
 import com.smartexpense.ledgerservice.dto.TransactionRequest;
 import com.smartexpense.ledgerservice.dto.TransactionResponse;
 import com.smartexpense.ledgerservice.entity.Category;
@@ -19,14 +20,22 @@ public class TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final CategoryRepository categoryRepository;
+    private final UserClient userClient;
 
-    public TransactionService(TransactionRepository transactionRepository,  CategoryRepository categoryRepository) {
+    public TransactionService(TransactionRepository transactionRepository,  CategoryRepository categoryRepository,  UserClient userClient) {
         this.transactionRepository = transactionRepository;
         this.categoryRepository = categoryRepository;
+        this.userClient = userClient;
     }
 
     // Create transaction
     public TransactionResponse createTransaction(TransactionRequest transactionRequest) {
+        Boolean userExists = userClient.validateUser(transactionRequest.getUserId());
+
+        if (userExists == null || !userExists) {
+            throw new RuntimeException("User with id " + transactionRequest.getUserId() + " does not exist");
+        }
+
         Category category = categoryRepository.findById(transactionRequest.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found with id " + transactionRequest.getCategoryId()));
 

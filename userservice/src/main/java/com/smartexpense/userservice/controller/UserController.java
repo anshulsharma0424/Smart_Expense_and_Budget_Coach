@@ -50,4 +50,10 @@ public class UserController {
     public ResponseEntity<UserResponse> getUserById (@PathVariable Long userId){
         return ResponseEntity.ok(userService.getUserById(userId));
     }
+
+    // Validate user
+    @GetMapping("/{userId}/validate")
+    public ResponseEntity<Boolean> validateUser(@PathVariable Long userId){
+        return ResponseEntity.ok(userService.existsByUserId((userId)));
+    }
 }

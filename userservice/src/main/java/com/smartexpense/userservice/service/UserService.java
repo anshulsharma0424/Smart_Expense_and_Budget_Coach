@@ -50,4 +50,8 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User with UserID: " + userId + " doesn't exist."));
         return userMapper.toUserResponse(user);
     }
+
+    public Boolean existsByUserId(Long userId) {
+        return userRepository.existsById(userId);
+    }
 }
