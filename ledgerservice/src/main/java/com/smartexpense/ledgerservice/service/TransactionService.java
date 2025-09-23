@@ -25,7 +25,7 @@ public class TransactionService {
         this.categoryRepository = categoryRepository;
     }
 
-    // Create
+    // Create transaction
     public TransactionResponse createTransaction(TransactionRequest transactionRequest) {
         Category category = categoryRepository.findById(transactionRequest.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found with id " + transactionRequest.getCategoryId()));
@@ -37,36 +37,28 @@ public class TransactionService {
 
     // Get all transactions for user
     public List<TransactionResponse> getTransactionsForUser(Long userId) {
-        List<Transaction> transactions = transactionRepository.findAll()
+        return transactionRepository.findByUserId(userId)
                 .stream()
-                .filter(tx -> tx.getUserId().equals(userId))
-                .toList();
-        return transactions.stream()
                 .map(TransactionMapper::toTransactionResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // Get transactions for user between dates
-    public List<TransactionResponse> getTransactionsForUserBetween(Long userId, LocalDateTime start, LocalDateTime end) {
-        List<Transaction> transactions = transactionRepository.findAll()
+    public List<TransactionResponse> getTransactionsForUserBetween(Long userId, LocalDateTime startDate, LocalDateTime endDate) {
+        return transactionRepository.findByUserIdAndTransactionDateBetween(userId, startDate, endDate)
                 .stream()
-                .filter(tx -> tx.getUserId().equals(userId)
-                        && !tx.getTransactionDate().isBefore(start)
-                        && !tx.getTransactionDate().isAfter(end))
-                .toList();
-        return transactions.stream()
                 .map(TransactionMapper::toTransactionResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    // Get by ID
-    public TransactionResponse getTransactionById(Long id) {
-        Transaction transaction = transactionRepository.findById(id)
-                .orElseThrow(() -> new TransactionNotFoundException("Transaction not found with id " + id));
+    // Get transaction by transactionID
+    public TransactionResponse getTransactionById(Long transactionId) {
+        Transaction transaction = transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new TransactionNotFoundException("Transaction not found with id " + transactionId));
         return TransactionMapper.toTransactionResponse(transaction);
     }
 
-    // Update
+    // Update transaction
     public TransactionResponse updateTransaction(Long id, TransactionRequest request) {
         Transaction transaction = transactionRepository.findById(id)
                 .orElseThrow(() -> new TransactionNotFoundException("Transaction not found with id " + id));
@@ -74,19 +66,13 @@ public class TransactionService {
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found with id " + request.getCategoryId()));
 
-        transaction.setUserId(request.getUserId());
-        transaction.setCategory(category);
-        transaction.setAmount(request.getAmount());
-        transaction.setTransactionType(request.getTransactionType());
-        transaction.setTransactionDate(request.getTransactionDate());
-        transaction.setMerchant(request.getMerchant());
-        transaction.setNote(request.getNote());
+        TransactionMapper.updateTransactionEntity(transaction, request, category);
 
         Transaction updated = transactionRepository.save(transaction);
         return TransactionMapper.toTransactionResponse(updated);
     }
 
-    // Delete
+    // Delete transaction
     public void deleteTransaction(Long id) {
         if (!transactionRepository.existsById(id)) {
             throw new TransactionNotFoundException("Transaction not found with id " + id);

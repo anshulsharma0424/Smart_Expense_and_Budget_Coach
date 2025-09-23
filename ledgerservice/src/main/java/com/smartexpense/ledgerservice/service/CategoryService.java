@@ -8,7 +8,6 @@ import com.smartexpense.ledgerservice.mapper.CategoryMapper;
 import com.smartexpense.ledgerservice.repository.CategoryRepository;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
 import java.util.stream.Collectors;

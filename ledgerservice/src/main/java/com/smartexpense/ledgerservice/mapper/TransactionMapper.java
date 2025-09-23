@@ -33,5 +33,15 @@ public class TransactionMapper {
         response.setUpdatedAt(transaction.getUpdatedAt());
         return response;
     }
+
+    public static void updateTransactionEntity(Transaction transaction, TransactionRequest request, Category category) {
+        transaction.setUserId(request.getUserId());
+        transaction.setCategory(category);
+        transaction.setAmount(request.getAmount());
+        transaction.setTransactionType(request.getTransactionType());
+        transaction.setTransactionDate(request.getTransactionDate());
+        transaction.setMerchant(request.getMerchant());
+        transaction.setNote(request.getNote());
+    }
 }
 
