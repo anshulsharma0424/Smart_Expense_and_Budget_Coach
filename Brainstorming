@@ -38,3 +38,26 @@ Eureka Server: Service discovery and registry.
 Config Server: Centralized config management.
 
 Keycloak: OAuth2/OIDC authentication server supporting SPA PKCE flow for production-grade security.
+
+
+
+[User]
+   |
+   | Register/Login
+   v
+[User Service] ---provides JWT--->
+   |
+   v
+[Ledger Service] ---creates transaction---> [MySQL LedgerDB]
+        |
+        | Publishes transaction.created
+        v
+[Kafka Topic: transaction.created] ---> [Insights Service] ---> [MongoDB Analytics]
+                                      |
+                                      ---> [Budget Service] ---> (threshold event)
+                                                                |
+                                                                v
+                                                        [Notifier Service] ---> SPA/email
+                                                                |
+                                                                v
+                                                      [AI Coach Service] ---> Personalized tips
