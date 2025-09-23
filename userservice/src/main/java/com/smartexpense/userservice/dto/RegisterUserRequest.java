@@ -15,8 +15,7 @@ public class RegisterUserRequest { // The input we are getting from the user in 
     private String email;
 
     @NotBlank(message = "Password is required")
-    @Size(min = 8, max = 20)
-    @Column(nullable = false)
+    @Size(min = 6, max = 100, message = "Password must be between 6 and 100 characters")
     private String password;
 
     @NotBlank(message = "Firstname is required")

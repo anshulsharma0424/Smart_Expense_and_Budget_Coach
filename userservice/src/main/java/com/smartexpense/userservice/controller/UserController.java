@@ -1,7 +1,10 @@
 package com.smartexpense.userservice.controller;
 
+import com.smartexpense.userservice.dto.LoginResponse;
+import com.smartexpense.userservice.dto.LoginUserRequest;
 import com.smartexpense.userservice.dto.RegisterUserRequest;
 import com.smartexpense.userservice.dto.UserResponse;
+import com.smartexpense.userservice.service.AuthService;
 import com.smartexpense.userservice.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -14,27 +17,35 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final AuthService authService;
 
-    // Constructor injection of UserService
-    public UserController(UserService userService) {
+    // Constructor injection of UserService, AuthService
+    public UserController(UserService userService,  AuthService authService) {
         this.userService = userService;
+        this.authService = authService;
     }
 
     // ============================= End Points =============================
 
     // 1. Register user
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<UserResponse> registerUser (@Valid @RequestBody RegisterUserRequest registerUserRequest){
         return ResponseEntity.ok(userService.registerUser(registerUserRequest));
     }
 
-    // 2. Get all users
+    // 2. Login user
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> loginUser (@Valid @RequestBody LoginUserRequest loginUserRequest){
+        return ResponseEntity.ok(authService.login(loginUserRequest));
+    }
+
+    // 3. Get all users
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers (){
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    // 3. Get user by id
+    // 4. Get user by id
     @GetMapping("/{userId}")
     public ResponseEntity<UserResponse> getUserById (@PathVariable Long userId){
         return ResponseEntity.ok(userService.getUserById(userId));

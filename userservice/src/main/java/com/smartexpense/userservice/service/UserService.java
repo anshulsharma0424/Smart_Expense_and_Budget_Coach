@@ -7,6 +7,8 @@ import com.smartexpense.userservice.exception.UserAlreadyExistException;
 import com.smartexpense.userservice.exception.UserNotFoundException;
 import com.smartexpense.userservice.mapper.UserMapper;
 import com.smartexpense.userservice.repository.UserRepository;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,10 +20,10 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    // Constructor injection of UserRepository
+    // Constructor injection of UserRepository, UserMapper, PasswordEncoder
     public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
-        this.userMapper = new UserMapper();
+        this.userMapper = userMapper;
     }
 
     // Register a new user
