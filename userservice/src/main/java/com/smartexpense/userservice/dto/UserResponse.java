@@ -1,6 +1,5 @@
 package com.smartexpense.userservice.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.time.LocalDateTime;

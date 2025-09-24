@@ -5,10 +5,13 @@ import com.smartexpense.ledgerservice.dto.TransactionRequest;
 import com.smartexpense.ledgerservice.dto.TransactionResponse;
 import com.smartexpense.ledgerservice.entity.Category;
 import com.smartexpense.ledgerservice.entity.Transaction;
+import com.smartexpense.ledgerservice.event.TransactionEvent;
 import com.smartexpense.ledgerservice.exception.TransactionNotFoundException;
+import com.smartexpense.ledgerservice.kafka.TransactionProducer;
 import com.smartexpense.ledgerservice.mapper.TransactionMapper;
 import com.smartexpense.ledgerservice.repository.CategoryRepository;
 import com.smartexpense.ledgerservice.repository.TransactionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,6 +24,9 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final CategoryRepository categoryRepository;
     private final UserClient userClient;
+
+    @Autowired
+    private TransactionProducer transactionProducer;
 
     public TransactionService(TransactionRepository transactionRepository,  CategoryRepository categoryRepository,  UserClient userClient) {
         this.transactionRepository = transactionRepository;
@@ -41,6 +47,21 @@ public class TransactionService {
 
         Transaction transaction = TransactionMapper.toTransactionEntity(transactionRequest, category);
         Transaction saved = transactionRepository.save(transaction);
+
+        // Event fire
+        TransactionEvent event = new TransactionEvent(
+                saved.getId(), // id field se transactionId lo
+                saved.getUserId(),
+                saved.getCategory().getId(), // category object se categoryId lo
+                saved.getAmount(),
+                saved.getTransactionType().name(),
+                saved.getMerchant(),
+                saved.getNote(),
+                saved.getTransactionDate()
+        );
+
+        transactionProducer.sendTransactionEvent(event);
+
         return TransactionMapper.toTransactionResponse(saved);
     }
 
